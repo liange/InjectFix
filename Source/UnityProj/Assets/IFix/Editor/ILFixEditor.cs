@@ -119,6 +119,8 @@ namespace IFix.Editor
                 return;
             }
 
+            Debug.LogFormat("CallIFix:MonoPath:{0}", mono_path);
+
             Process hotfix_injection = new Process();
             hotfix_injection.StartInfo.FileName = mono_path;
 #if UNITY_5_6_OR_NEWER
@@ -135,6 +137,8 @@ namespace IFix.Editor
 
             //UnityEngine.Debug.Log(hotfix_injection.StartInfo.FileName);
             //UnityEngine.Debug.Log(hotfix_injection.StartInfo.Arguments);
+
+            Debug.Log("CallIFix:注入日志开始");
 
             StringBuilder exceptionInfo = null;
             while (!hotfix_injection.StandardOutput.EndOfStream)
@@ -169,6 +173,8 @@ namespace IFix.Editor
             {
                 UnityEngine.Debug.LogError(exceptionInfo);
             }
+
+            Debug.Log("CallIFix:注入日志结束");
         }
 
         [MenuItem("InjectFix/Inject", false, 1)]
