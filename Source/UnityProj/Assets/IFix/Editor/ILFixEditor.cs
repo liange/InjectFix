@@ -22,6 +22,9 @@ using Debug = UnityEngine.Debug;
 using UnityEditor.Build.Player;
 #endif
 
+/**
+ * https://github.com/Tencent/InjectFix/issues/417
+ */
 namespace IFix.Editor
 {
     /// <summary>
@@ -937,7 +940,13 @@ namespace IFix.Editor
             {
                 foreach (var assembly in injectAssemblys)
                 {
-                    var assembly_path = string.Format("./Library/{0}/{1}.dll", GetScriptAssembliesFolder(), assembly);
+                    var assembly_path = string.Format("{0}/{1}.dll", GetScriptAssembliesFolder(), assembly);
+
+                    if (File.Exists(assembly_path) == false)
+                    {
+                        Debug.LogErrorFormat("Patch:文件不存在:{0}", assembly_path);
+                    }
+
                     GenPatch(assembly, assembly_path, "./Assets/Plugins/IFix.Core.dll",
                         string.Format("{0}.patch.bytes", assembly));
                 }
