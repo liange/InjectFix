@@ -345,6 +345,13 @@ namespace IFix.Editor
 
                 var assembly_path = string.Format("{0}/{1}.dll", targetAssembliesFolder, assembly);
 
+                if (!File.Exists(assembly_path))
+                {
+                    UnityEngine.Debug.LogError($"IFixEditor.InjectAssembly: 程序集文件不存在，跳过注入: {assembly_path}");
+                    File.Delete(processCfgPath);
+                    return;
+                }
+
                 var patch_path = string.Format("./{0}.ill.bytes", assembly);
                 List<string> args = new List<string>() { "-inject", core_path, assembly_path,
                     processCfgPath, patch_path, assembly_path };
@@ -361,7 +368,12 @@ namespace IFix.Editor
                     catch { }
                 }
 
+                UnityEngine.Debug.Log($"IFixEditor.InjectAssembly: 开始注入程序集: {assembly} -> {assembly_path}");
                 CallIFix(args);
+            }
+            else
+            {
+                UnityEngine.Debug.Log($"IFixEditor.InjectAssembly: 程序集无配置类型，跳过注入: {assembly}");
             }
 
             File.Delete(processCfgPath);
@@ -951,7 +963,8 @@ namespace IFix.Editor
 
                     if (File.Exists(assembly_path) == false)
                     {
-                        Debug.LogErrorFormat("Patch:文件不存在:{0}", assembly_path);
+                        Debug.LogErrorFormat("Patch:文件不存在，跳过: {0}", assembly_path);
+                        continue;
                     }
 
                     GenPatch(assembly, assembly_path, "./Assets/Plugins/IFix.Core.dll",
